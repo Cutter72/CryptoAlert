@@ -3,6 +3,8 @@ package pl.cutter72.binance.api;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.IntentFilter;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -65,16 +67,20 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickMakeAlert(View view) {
         //Set notification content
+        long[] vibration = {0, 1000, 500, 1000, 500, 1000, 500, 1000, 500, 1000, 500, 1000, 500, 1000, 500, 1000, 500, 1000, 500, 1000, 500, 1000, 500, 1000};
+        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentTitle("textTitle")
-                .setContentText("textContent")
-                .setPriority(NotificationCompat.PRIORITY_HIGH);
-        //Create a channel for notification in ANdroid 8+
+                .setContentTitle("BinanceAPI")
+                .setContentText("Drop alert!")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setVibrate(vibration)
+                .setSound(uri);
+        //Create a channel for notification in Android 8+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.binance_api_channel);
             String description = getString(R.string.binance_alarms);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
             // Register the channel with the system; you can't change the importance
