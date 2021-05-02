@@ -9,7 +9,7 @@ import android.widget.TextView;
 import pl.cutter72.binance.api.R;
 
 public final class Colorize {
-    private static final int COLORIZE_DURATION = 369;
+    private static final int COLORIZE_DURATION = 222;
 
     private Colorize() {
         throw new UnsupportedOperationException();

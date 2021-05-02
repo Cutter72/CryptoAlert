@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">BinanceApi</string>
     <string name="crypto_price">Crypto: Price</string>
+    <string name="binance_api_channel">Binance API channel</string>
+    <string name="binance_alarms">Binance alarms</string>
 </resources>

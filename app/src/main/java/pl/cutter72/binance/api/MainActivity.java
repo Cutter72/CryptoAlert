@@ -1,16 +1,22 @@
 package pl.cutter72.binance.api;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import pl.cutter72.binance.api.model.NetworkChangeReceiver;
 import pl.cutter72.binance.api.model.PriceListener;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String CHANNEL_ID = "channelId";
     private NetworkChangeReceiver networkChangeReceiver = null;
     private PriceListener priceListener = null;
 
@@ -58,6 +64,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickMakeAlert(View view) {
-
+        //Set notification content
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setContentTitle("textTitle")
+                .setContentText("textContent")
+                .setPriority(NotificationCompat.PRIORITY_HIGH);
+        //Create a channel for notification in ANdroid 8+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.binance_api_channel);
+            String description = getString(R.string.binance_alarms);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+        //Show notification
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        // notificationId is a unique int for each notification that you must define
+        notificationManager.notify(369, builder.build());
     }
 }
