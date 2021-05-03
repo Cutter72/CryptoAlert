@@ -17,9 +17,12 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
+import pl.cutter72.binance.api.MainActivity;
+
 @SuppressWarnings("Convert2Lambda")
 public class PriceListener {
     private static final String PRICE_ENDPOINT = "https://api.binance.com/api/v3/ticker/price?symbol=";
+    private static final String CANDLESTICK_ENDPOINT_FORMAT = "https://api.binance.com/api/v3/klines?symbol=%s&interval=%s&limit=%s";
     private boolean isListening;
     private final Activity activity;
     private final TextView xrpEurTextView;
@@ -77,6 +80,22 @@ public class PriceListener {
         runnable.run();
     }
 
+    public void getCandlestickChartData(String cryptoSymbol, String interval, int limit) {
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                Runnable request = new Runnable() {
+                    @Override
+                    public void run() {
+                        MainActivity.candlestickChartData = getJsonCandlestickChartData(cryptoSymbol, interval, limit);
+                    }
+                };
+                new Thread(request).start();
+            }
+        };
+        runnable.run();
+    }
+
     private void updateCryptoData(JsonCryptoPrice cryptoPrice, String cryptoSymbol) {
         switch (cryptoSymbol) {
             case JsonCryptoPrice.SYMBOL_XRPEUR:
@@ -101,6 +120,7 @@ public class PriceListener {
 
     @Nullable
     private JsonCryptoPrice getJsonCryptoPrice(String cryptoSymbol) {
+        System.out.println("getJsonCryptoPrice");
         HttpURLConnection urlConnection = null;
         JsonCryptoPrice cryptoPrice = new JsonCryptoPrice();
         if (cryptoSymbol != null) {
@@ -111,6 +131,7 @@ public class PriceListener {
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
                 String jsonResponseString = getJsonString(bufferedReader);
+                System.out.println("jsonResponseString: " + jsonResponseString);
                 ObjectMapper objectMapper = new ObjectMapper();
                 cryptoPrice = objectMapper.readValue(jsonResponseString, JsonCryptoPrice.class);
             } catch (IOException e) {
@@ -122,6 +143,36 @@ public class PriceListener {
             }
         }
         return cryptoPrice;
+    }
+
+    @Nullable
+    private CandlestickChartData getJsonCandlestickChartData(String cryptoSymbol, String interval, int limit) {
+        System.out.println("getJsonCandlestickChartData");
+        HttpURLConnection urlConnection = null;
+        CandlestickChartData candlestickChartData = null;
+        if (cryptoSymbol != null) {
+            try {
+                URL url = new URL(String.format(CANDLESTICK_ENDPOINT_FORMAT, cryptoSymbol, interval, limit));
+                urlConnection = (HttpURLConnection) url.openConnection();
+                InputStream inputStream = new BufferedInputStream(urlConnection.getInputStream());
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String jsonResponseString = getJsonString(bufferedReader);
+                System.out.println("jsonResponseString: " + jsonResponseString);
+                ObjectMapper objectMapper = new ObjectMapper();
+                String[][] candlestickDataArrays = objectMapper.readValue(jsonResponseString, String[][].class);
+                System.out.println("candlestickDataArrays.length: " + candlestickDataArrays.length);
+                System.out.println("candlestickDataArrays[0].length: " + candlestickDataArrays[0].length);
+                candlestickChartData = new CandlestickChartData(candlestickDataArrays);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+            }
+        }
+        return candlestickChartData;
     }
 
     private String getJsonString(BufferedReader bufferedReader) throws IOException {
