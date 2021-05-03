@@ -17,8 +17,14 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import pl.cutter72.binance.api.MainActivity;
 
+@Accessors(chain = true)
+@Getter
+@Setter
 @SuppressWarnings("Convert2Lambda")
 public class PriceListener {
     private static final String PRICE_ENDPOINT = "https://api.binance.com/api/v3/ticker/price?symbol=";
@@ -29,9 +35,9 @@ public class PriceListener {
     private final TextView btcEurTextView;
     private final TextView xrpBtcTextView;
     private final TextView xrpBtcEurTextView;
-    private JsonCryptoPrice xrpEurPrice;
-    private JsonCryptoPrice btcEurPrice;
-    private JsonCryptoPrice xrpBtcPrice;
+    private JsonCryptoSymbolWithPrice xrpEurPrice;
+    private JsonCryptoSymbolWithPrice btcEurPrice;
+    private JsonCryptoSymbolWithPrice xrpBtcPrice;
 
     public PriceListener(Activity activity, TextView xrpEurTextView, TextView btcEurTextView, TextView xrpBtcTextView, TextView xrpBtcEurTextView) {
         this.activity = activity;
@@ -39,9 +45,9 @@ public class PriceListener {
         this.btcEurTextView = btcEurTextView;
         this.xrpBtcTextView = xrpBtcTextView;
         this.xrpBtcEurTextView = xrpBtcEurTextView;
-        this.xrpEurPrice = new JsonCryptoPrice();
-        this.btcEurPrice = new JsonCryptoPrice();
-        this.xrpBtcPrice = new JsonCryptoPrice();
+        this.xrpEurPrice = new JsonCryptoSymbolWithPrice();
+        this.btcEurPrice = new JsonCryptoSymbolWithPrice();
+        this.xrpBtcPrice = new JsonCryptoSymbolWithPrice();
         this.isListening = false;
     }
 
@@ -49,9 +55,9 @@ public class PriceListener {
     public void startListening() {
         if (!this.isListening) {
             this.isListening = true;
-            listenFor(JsonCryptoPrice.SYMBOL_XRPEUR);
-            listenFor(JsonCryptoPrice.SYMBOL_BTCEUR);
-            listenFor(JsonCryptoPrice.SYMBOL_XRPBTC);
+            listenFor(JsonCryptoSymbolWithPrice.SYMBOL_XRPEUR);
+            listenFor(JsonCryptoSymbolWithPrice.SYMBOL_BTCEUR);
+            listenFor(JsonCryptoSymbolWithPrice.SYMBOL_XRPBTC);
         }
     }
 
@@ -97,17 +103,17 @@ public class PriceListener {
         runnable.run();
     }
 
-    private void updateCryptoData(JsonCryptoPrice cryptoPrice, String cryptoSymbol) {
+    private void updateCryptoData(JsonCryptoSymbolWithPrice cryptoPrice, String cryptoSymbol) {
         switch (cryptoSymbol) {
-            case JsonCryptoPrice.SYMBOL_XRPEUR:
+            case JsonCryptoSymbolWithPrice.SYMBOL_XRPEUR:
                 xrpEurPrice = cryptoPrice;
                 updatePriceTextView(xrpEurPrice, xrpEurTextView, 4);
                 break;
-            case JsonCryptoPrice.SYMBOL_BTCEUR:
+            case JsonCryptoSymbolWithPrice.SYMBOL_BTCEUR:
                 btcEurPrice = cryptoPrice;
                 updatePriceTextView(btcEurPrice, btcEurTextView, 2);
                 break;
-            case JsonCryptoPrice.SYMBOL_XRPBTC:
+            case JsonCryptoSymbolWithPrice.SYMBOL_XRPBTC:
                 xrpBtcPrice = cryptoPrice;
                 updatePriceTextView(xrpBtcPrice, xrpBtcTextView, 8);
                 break;
@@ -117,13 +123,16 @@ public class PriceListener {
         double xrpBtcEur = xrpBtcPrice.getPrice() * btcEurPrice.getPrice();
         String xrpBtcEurPrice = "XRPBTC_EUR: " + TextUtil.getFormattedNumber(xrpBtcEur, 4);
         activity.runOnUiThread(() -> xrpBtcEurTextView.setText(xrpBtcEurPrice));
+        if (xrpEurPrice.getPrice() > 1.36 || xrpEurPrice.getPrice() < 1.0) {
+            activity.runOnUiThread(() -> ((MainActivity) activity).makeAlert("XRP alert!", String.format(Locale.getDefault(), "%s: %.4f", getXrpEurPrice().getSymbol(), getXrpEurPrice().getPrice())));
+        }
     }
 
     @Nullable
-    private JsonCryptoPrice getJsonCryptoPrice(String cryptoSymbol) {
+    private JsonCryptoSymbolWithPrice getJsonCryptoPrice(String cryptoSymbol) {
         System.out.println("getJsonCryptoPrice");
         HttpURLConnection urlConnection = null;
-        JsonCryptoPrice cryptoPrice = new JsonCryptoPrice();
+        JsonCryptoSymbolWithPrice cryptoPrice = new JsonCryptoSymbolWithPrice();
         if (cryptoSymbol != null) {
             try {
                 URL url = new URL(PRICE_ENDPOINT + cryptoSymbol);
@@ -134,7 +143,7 @@ public class PriceListener {
                 String jsonResponseString = getJsonString(bufferedReader);
                 System.out.println("jsonResponseString: " + jsonResponseString);
                 ObjectMapper objectMapper = new ObjectMapper();
-                cryptoPrice = objectMapper.readValue(jsonResponseString, JsonCryptoPrice.class);
+                cryptoPrice = objectMapper.readValue(jsonResponseString, JsonCryptoSymbolWithPrice.class);
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
@@ -189,7 +198,7 @@ public class PriceListener {
         return sb.toString();
     }
 
-    private void updatePriceTextView(JsonCryptoPrice cryptoPrice, TextView textViewToUpdate, int decimalPlaces) {
+    private void updatePriceTextView(JsonCryptoSymbolWithPrice cryptoPrice, TextView textViewToUpdate, int decimalPlaces) {
         String formattedPrice = getFormattedPriceText(cryptoPrice, decimalPlaces);
         Runnable updateText = new Runnable() {
             @Override
@@ -203,7 +212,7 @@ public class PriceListener {
         }
     }
 
-    private String getFormattedPriceText(JsonCryptoPrice cryptoPrice, int decimalPlaces) {
+    private String getFormattedPriceText(JsonCryptoSymbolWithPrice cryptoPrice, int decimalPlaces) {
         return String.format(Locale.getDefault(), "%s: %s", cryptoPrice.getSymbol(), TextUtil.getFormattedNumber(cryptoPrice.getPrice(), decimalPlaces));
     }
 }

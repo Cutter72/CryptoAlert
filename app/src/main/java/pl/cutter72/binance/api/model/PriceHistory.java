@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PriceHistory {
-    private Map<Date, JsonCryptoPrice> priceHistory;
+    private Map<Date, JsonCryptoSymbolWithPrice> priceHistory;
 
     public PriceHistory() {
         this.priceHistory = new HashMap<>();

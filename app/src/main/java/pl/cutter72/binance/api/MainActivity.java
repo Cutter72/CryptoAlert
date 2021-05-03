@@ -29,7 +29,7 @@ import java.util.List;
 
 import pl.cutter72.binance.api.model.CandlestickChartData;
 import pl.cutter72.binance.api.model.CandlestickData;
-import pl.cutter72.binance.api.model.JsonCryptoPrice;
+import pl.cutter72.binance.api.model.JsonCryptoSymbolWithPrice;
 import pl.cutter72.binance.api.model.NetworkChangeReceiver;
 import pl.cutter72.binance.api.model.PriceListener;
 
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         xrpEurChart.setDrawBorders(true);
         xrpEurChart.setBorderColor(getColor(R.color.white));
         Description description = xrpEurChart.getDescription();
-        description.setText(JsonCryptoPrice.SYMBOL_XRPEUR);
+        description.setText(JsonCryptoSymbolWithPrice.SYMBOL_XRPEUR);
         description.setTextColor(getColor(R.color.white));
 
         YAxis leftAxis = xrpEurChart.getAxisLeft();
@@ -120,23 +120,22 @@ public class MainActivity extends AppCompatActivity {
         unregisterNetworkStateCHangeReceiver();
     }
 
-    public void onClickMakeAlert(View view) {
-//        makeAlert();
+    public void onClickRefreshChart(View view) {
         getCandlestickData();
     }
 
     private void getCandlestickData() {
-        priceListener.getCandlestickChartData(JsonCryptoPrice.SYMBOL_XRPEUR, "1m", LIMIT);
+        priceListener.getCandlestickChartData(JsonCryptoSymbolWithPrice.SYMBOL_XRPEUR, "1m", LIMIT);
     }
 
-    private void makeAlert() {
+    public void makeAlert(String title, String contentText) {
         //Set notification content
         long[] vibration = {0, 1000, 500, 1000, 500, 1000, 500, 1000, 500, 1000, 500, 1000, 500, 1000, 500, 1000, 500, 1000, 500, 1000, 500, 1000, 500, 1000};
         Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentTitle("BinanceAPI")
-                .setContentText("Drop alert!")
+                .setContentTitle(title)
+                .setContentText(contentText)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setVibrate(vibration)
                 .setSound(uri);

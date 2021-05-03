@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Getter
 @Setter
-public class JsonCryptoPrice {
+public class JsonCryptoSymbolWithPrice {
     public static final String SYMBOL_XRPEUR = "XRPEUR";
     public static final String SYMBOL_BTCEUR = "BTCEUR";
     public static final String SYMBOL_XRPBTC = "XRPBTC";
@@ -15,7 +15,7 @@ public class JsonCryptoPrice {
     private String symbol;
     private double price;
 
-    public JsonCryptoPrice() {
+    public JsonCryptoSymbolWithPrice() {
         this.symbol = "noSymbol";
         this.price = -1;
     }
