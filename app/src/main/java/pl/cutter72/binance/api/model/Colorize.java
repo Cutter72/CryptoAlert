@@ -17,7 +17,7 @@ public final class Colorize {
 
     @SuppressWarnings("Convert2Lambda")
     public static void background(Context context, final View view) {
-        view.setBackgroundColor(context.getColor(R.color.teal_200));
+        view.setBackgroundColor(context.getColor(R.color.binance_primary));
         DelayedRunner.runDelayed(new Runnable() {
             @Override
             public void run() {
@@ -29,7 +29,7 @@ public final class Colorize {
     @SuppressWarnings("Convert2Lambda")
     public static void text(Context context, final TextView textView) {
         final ColorStateList defaultTextColorStateList = textView.getTextColors();
-        textView.setTextColor(context.getColor(R.color.teal_200));
+        textView.setTextColor(context.getColor(R.color.binance_primary));
         DelayedRunner.runDelayed(new Runnable() {
             @Override
             public void run() {

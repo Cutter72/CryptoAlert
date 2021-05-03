@@ -88,6 +88,7 @@ public class PriceListener {
                     @Override
                     public void run() {
                         MainActivity.candlestickChartData = getJsonCandlestickChartData(cryptoSymbol, interval, limit);
+                        activity.runOnUiThread(((MainActivity) activity)::updatedChartData);
                     }
                 };
                 new Thread(request).start();

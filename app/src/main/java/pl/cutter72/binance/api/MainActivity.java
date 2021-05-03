@@ -3,6 +3,8 @@ package pl.cutter72.binance.api;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -13,7 +15,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.github.mikephil.charting.charts.CandleStickChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.CandleData;
+import com.github.mikephil.charting.data.CandleDataSet;
+import com.github.mikephil.charting.data.CandleEntry;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import pl.cutter72.binance.api.model.CandlestickChartData;
+import pl.cutter72.binance.api.model.CandlestickData;
 import pl.cutter72.binance.api.model.JsonCryptoPrice;
 import pl.cutter72.binance.api.model.NetworkChangeReceiver;
 import pl.cutter72.binance.api.model.PriceListener;
@@ -21,17 +36,82 @@ import pl.cutter72.binance.api.model.PriceListener;
 public class MainActivity extends AppCompatActivity {
 
     private static final String CHANNEL_ID = "channelId";
+    private static final int LIMIT = 60;
+    public static CandlestickChartData candlestickChartData = null;
     private NetworkChangeReceiver networkChangeReceiver = null;
     private PriceListener priceListener = null;
-    public static CandlestickChartData candlestickChartData = null;
+    private CandleStickChart xrpEurChart = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);// Create an IntentFilter instance.
+        setContentView(R.layout.activity_main);
+        xrpEurChart = findViewById(R.id.xrpEurChart);
+        initializeChart();
         registerNetworkStateChangeReceiver();
         priceListener = new PriceListener(this, findViewById(R.id.xrpEurText), findViewById(R.id.btcEurText), findViewById(R.id.xrpBtcText), findViewById(R.id.xrpBtcEurText));
         networkChangeReceiver.onReceive(this, getIntent());
+    }
+
+    private void initializeChart() {
+        xrpEurChart.setHighlightPerDragEnabled(true);
+        xrpEurChart.setDrawBorders(true);
+        xrpEurChart.setBorderColor(getColor(R.color.white));
+        Description description = xrpEurChart.getDescription();
+        description.setText(JsonCryptoPrice.SYMBOL_XRPEUR);
+        description.setTextColor(getColor(R.color.white));
+
+        YAxis leftAxis = xrpEurChart.getAxisLeft();
+        leftAxis.setDrawLabels(false);
+        leftAxis.setDrawGridLines(false);
+        YAxis rightAxis = xrpEurChart.getAxisRight();
+        rightAxis.setDrawGridLines(true);
+        rightAxis.setGridColor(getColor(R.color.chart_grid_lines));
+        rightAxis.setGridLineWidth(0.8f);
+        rightAxis.setTextColor(getColor(R.color.white));
+        xrpEurChart.requestDisallowInterceptTouchEvent(false);
+
+        XAxis xAxis = xrpEurChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setTextColor(getColor(R.color.white));
+        xAxis.setDrawGridLines(true);// disable x axis grid lines
+        xAxis.setDrawLabels(true);
+        xAxis.setGridColor(getColor(R.color.chart_grid_lines));
+        xAxis.setGridLineWidth(0.8f);
+        xAxis.setLabelRotationAngle(-45f);
+        xAxis.setAvoidFirstLastClipping(true);
+
+        Legend l = xrpEurChart.getLegend();
+        l.setEnabled(false);
+    }
+
+    public void updatedChartData() {
+        if (candlestickChartData != null) {
+            List<CandleEntry> candleEntryList = new ArrayList<>();
+            float i = -LIMIT;
+            for (CandlestickData candlestickData : candlestickChartData.getCandlestickArray()) {
+                candleEntryList.add(new CandleEntry(i++, (float) candlestickData.getHigh(), (float) candlestickData.getLow(), (float) candlestickData.getOpen(), (float) candlestickData.getClose()));
+            }
+            CandleDataSet set1 = new CandleDataSet(candleEntryList, "DataSet 1");
+            set1.setColor(Color.rgb(80, 80, 80));
+            set1.setShadowColorSameAsCandle(true);
+            set1.setShadowWidth(0.8f);
+            set1.setDecreasingColor(getColor(R.color.candlestick_decreasing));
+            set1.setDecreasingPaintStyle(Paint.Style.FILL);
+            set1.setIncreasingColor(getColor(R.color.candlestick_increasing));
+            set1.setIncreasingPaintStyle(Paint.Style.FILL);
+            set1.setNeutralColor(getColor(R.color.candlestick_decreasing));
+            set1.setDrawValues(false);
+
+
+            // create a data object with the datasets
+            CandleData data = new CandleData(set1);
+
+
+            // set data
+            xrpEurChart.setData(data);
+            xrpEurChart.invalidate();
+        }
     }
 
     @Override
@@ -46,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getCandlestickData() {
-        priceListener.getCandlestickChartData(JsonCryptoPrice.SYMBOL_XRPEUR, "1m", 30);
+        priceListener.getCandlestickChartData(JsonCryptoPrice.SYMBOL_XRPEUR, "1m", LIMIT);
     }
 
     private void makeAlert() {
