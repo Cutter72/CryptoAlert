@@ -38,6 +38,8 @@ public class PriceListener {
     private JsonCryptoSymbolWithPrice xrpEurPrice;
     private JsonCryptoSymbolWithPrice btcEurPrice;
     private JsonCryptoSymbolWithPrice xrpBtcPrice;
+    public static double higherThan = 999999;
+    public static double lowerThan = -111111;
 
     public PriceListener(Activity activity, TextView xrpEurTextView, TextView btcEurTextView, TextView xrpBtcTextView, TextView xrpBtcEurTextView) {
         this.activity = activity;
@@ -123,7 +125,7 @@ public class PriceListener {
         double xrpBtcEur = xrpBtcPrice.getPrice() * btcEurPrice.getPrice();
         String xrpBtcEurPrice = "XRPBTC_EUR: " + TextUtil.getFormattedNumber(xrpBtcEur, 4);
         activity.runOnUiThread(() -> xrpBtcEurTextView.setText(xrpBtcEurPrice));
-        if (xrpEurPrice.getPrice() > 1.36 || xrpEurPrice.getPrice() < 1.0) {
+        if (xrpEurPrice.getPrice() > higherThan || xrpEurPrice.getPrice() < lowerThan) {
             activity.runOnUiThread(() -> ((MainActivity) activity).makeAlert("XRP alert!", String.format(Locale.getDefault(), "%s: %.4f", getXrpEurPrice().getSymbol(), getXrpEurPrice().getPrice())));
         }
     }

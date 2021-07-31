@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
@@ -38,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String CHANNEL_ID = "channelId";
     private static final int LIMIT = 60;
     public static CandlestickChartData candlestickChartData = null;
+    private EditText higherThan;
+    private EditText lowerThan;
     private NetworkChangeReceiver networkChangeReceiver = null;
     private PriceListener priceListener = null;
     private CandleStickChart xrpEurChart = null;
@@ -47,10 +50,36 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         xrpEurChart = findViewById(R.id.xrpEurChart);
+        initializeAlarms();
         initializeChart();
         registerNetworkStateChangeReceiver();
         priceListener = new PriceListener(this, findViewById(R.id.xrpEurText), findViewById(R.id.btcEurText), findViewById(R.id.xrpBtcText), findViewById(R.id.xrpBtcEurText));
         networkChangeReceiver.onReceive(this, getIntent());
+    }
+
+    private void initializeAlarms() {
+        higherThan = findViewById(R.id.higherThan);
+        lowerThan = findViewById(R.id.lowerThan);
+        higherThan.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                try {
+                    PriceListener.higherThan = Double.parseDouble(((EditText) v).getText().toString());
+                } catch (NumberFormatException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        lowerThan.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                try {
+                    PriceListener.lowerThan = Double.parseDouble(((EditText) v).getText().toString());
+                } catch (NumberFormatException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
     }
 
     private void initializeChart() {
@@ -60,6 +89,11 @@ public class MainActivity extends AppCompatActivity {
         Description description = xrpEurChart.getDescription();
         description.setText(JsonCryptoSymbolWithPrice.SYMBOL_XRPEUR);
         description.setTextColor(getColor(R.color.white));
+//        xrpEurChart.setMarker(new MarkerView(this, R.layout.support_simple_spinner_dropdown_item));
+//        xrpEurChart.setDrawMarkers(true);
+        xrpEurChart.setHighlightPerDragEnabled(true);
+        xrpEurChart.setHighlightPerTapEnabled(true);
+//        xrpEurChart.setHigh(true);
 
         YAxis leftAxis = xrpEurChart.getAxisLeft();
         leftAxis.setDrawLabels(false);

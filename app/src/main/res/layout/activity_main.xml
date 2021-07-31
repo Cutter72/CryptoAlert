@@ -4,8 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
     tools:context=".MainActivity">
+
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="1m"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+        </LinearLayout>
+    </HorizontalScrollView>
 
     <com.github.mikephil.charting.charts.CandleStickChart
         android:id="@+id/xrpEurChart"
@@ -14,8 +36,18 @@
         android:background="@color/chart_background"
         app:layout_constraintBottom_toTopOf="@+id/xrpEurText"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView"
+        app:layout_constraintVertical_bias="0.0">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textColor="@color/white" />
+    </com.github.mikephil.charting.charts.CandleStickChart>
 
     <TextView
         android:id="@+id/xrpEurText"
@@ -23,10 +55,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:text="@string/crypto_price"
-        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/btcEurText"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintLeft_toLeftOf="parent" />
 
     <TextView
         android:id="@+id/btcEurText"
@@ -34,10 +64,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:text="@string/crypto_price"
-        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/xrpBtcText"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintLeft_toLeftOf="parent" />
 
     <TextView
         android:id="@+id/xrpBtcText"
@@ -45,10 +73,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:text="@string/crypto_price"
-        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/xrpBtcEurText"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintLeft_toLeftOf="parent" />
 
     <TextView
         android:id="@+id/xrpBtcEurText"
@@ -56,10 +82,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:text="@string/crypto_price"
-        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/button"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintLeft_toLeftOf="parent" />
 
     <Button
         android:id="@+id/button"
@@ -70,5 +94,49 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/alarm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="@string/alarms"
+        app:layout_constraintBottom_toBottomOf="@+id/lowerThan"
+        app:layout_constraintEnd_toStartOf="@+id/higherThan"
+        app:layout_constraintTop_toTopOf="@+id/higherThan" />
+
+    <EditText
+        android:id="@+id/higherThan"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:ems="7"
+        android:gravity="center"
+        android:inputType="numberDecimal"
+        android:padding="0dp"
+        android:text="1.50"
+        android:textColor="@color/candlestick_increasing"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/button"
+        app:layout_constraintTop_toBottomOf="@+id/xrpEurChart"
+        app:layout_constraintWidth_percent="0.25" />
+
+    <EditText
+        android:id="@+id/lowerThan"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:ems="7"
+        android:gravity="center"
+        android:inputType="numberDecimal"
+        android:padding="0dp"
+        android:text="1.00"
+        android:textColor="@color/candlestick_decreasing"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/button"
+        app:layout_constraintTop_toBottomOf="@+id/higherThan"
+        app:layout_constraintWidth_percent="0.25" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
