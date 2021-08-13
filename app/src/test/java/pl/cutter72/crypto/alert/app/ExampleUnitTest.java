@@ -1,8 +1,8 @@
-package pl.cutter72.binance.api;
-
-import org.junit.Test;
+package pl.cutter72.crypto.alert.app;
 
 import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
  * Example local unit test, which will execute on the development machine (host).

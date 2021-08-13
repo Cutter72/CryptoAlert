@@ -1,4 +1,6 @@
-package pl.cutter72.binance.api.model;
+package pl.cutter72.crypto.alert.app.model;
+
+import androidx.annotation.NonNull;
 
 import java.util.Date;
 
@@ -40,6 +42,7 @@ public class CandlestickData {
         }
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "CandlestickData{" +

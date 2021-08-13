@@ -1,4 +1,4 @@
-package pl.cutter72.binance.api;
+package pl.cutter72.crypto.alert.app;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -28,12 +28,13 @@ import com.github.mikephil.charting.data.CandleEntry;
 import java.util.ArrayList;
 import java.util.List;
 
-import pl.cutter72.binance.api.model.CandlestickChartData;
-import pl.cutter72.binance.api.model.CandlestickData;
-import pl.cutter72.binance.api.model.JsonCryptoSymbolWithPrice;
-import pl.cutter72.binance.api.model.NetworkChangeReceiver;
-import pl.cutter72.binance.api.model.PriceListener;
+import pl.cutter72.crypto.alert.app.model.CandlestickChartData;
+import pl.cutter72.crypto.alert.app.model.CandlestickData;
+import pl.cutter72.crypto.alert.app.model.JsonCryptoSymbolWithPrice;
+import pl.cutter72.crypto.alert.app.model.NetworkChangeReceiver;
+import pl.cutter72.crypto.alert.app.model.PriceListener;
 
+@SuppressWarnings("Convert2Lambda")
 public class MainActivity extends AppCompatActivity {
 
     private static final String CHANNEL_ID = "channelId";

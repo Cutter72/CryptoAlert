@@ -1,4 +1,4 @@
-package pl.cutter72.binance.api.model;
+package pl.cutter72.crypto.alert.app.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

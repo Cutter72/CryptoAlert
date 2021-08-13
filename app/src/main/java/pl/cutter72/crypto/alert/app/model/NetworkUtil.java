@@ -1,4 +1,4 @@
-package pl.cutter72.binance.api.model;
+package pl.cutter72.crypto.alert.app.model;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -26,6 +26,7 @@ public class NetworkUtil {
         return TYPE_NOT_CONNECTED;
     }
 
+    @SuppressWarnings("ConstantConditions")
     public static int getConnectivityStatusString(Context context) {
         int conn = NetworkUtil.getConnectivityStatus(context);
         int status = 0;

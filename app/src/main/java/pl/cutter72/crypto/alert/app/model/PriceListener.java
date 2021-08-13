@@ -1,4 +1,4 @@
-package pl.cutter72.binance.api.model;
+package pl.cutter72.crypto.alert.app.model;
 
 import android.app.Activity;
 import android.widget.TextView;
@@ -20,7 +20,7 @@ import java.util.Locale;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import pl.cutter72.binance.api.MainActivity;
+import pl.cutter72.crypto.alert.app.MainActivity;
 
 @Accessors(chain = true)
 @Getter

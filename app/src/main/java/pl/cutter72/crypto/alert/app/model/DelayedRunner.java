@@ -1,8 +1,7 @@
-package pl.cutter72.binance.api.model;
+package pl.cutter72.crypto.alert.app.model;
 
 import android.os.Handler;
 
-@SuppressWarnings("deprecation")
 public final class DelayedRunner {
     public static final long SECOND = 1000;
     public static final long MINUTE = SECOND * 60;

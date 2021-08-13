@@ -1,4 +1,4 @@
-package pl.cutter72.binance.api.model;
+package pl.cutter72.crypto.alert.app.model;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -6,7 +6,7 @@ import android.graphics.Color;
 import android.view.View;
 import android.widget.TextView;
 
-import pl.cutter72.binance.api.R;
+import pl.cutter72.crypto.alert.app.R;
 
 public final class Colorize {
     private static final int COLORIZE_DURATION = 222;
