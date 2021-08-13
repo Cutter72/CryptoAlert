@@ -12,7 +12,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.BinanceApi"
+        android:theme="@style/Theme.CryptoAlertApp"
         android:fullBackupContent="@xml/backup_descriptor">
         <activity
             android:name="pl.cutter72.crypto.alert.app.android.activities.MainActivity"
