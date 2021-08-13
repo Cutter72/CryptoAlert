@@ -1,4 +1,4 @@
-package pl.cutter72.crypto.alert.app.model;
+package pl.cutter72.crypto.alert.app.android.other;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

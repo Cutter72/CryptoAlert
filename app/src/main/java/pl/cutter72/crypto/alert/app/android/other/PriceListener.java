@@ -1,4 +1,4 @@
-package pl.cutter72.crypto.alert.app.model;
+package pl.cutter72.crypto.alert.app.android.other;
 
 import android.app.Activity;
 import android.widget.TextView;
@@ -21,6 +21,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import pl.cutter72.crypto.alert.app.android.activities.MainActivity;
+import pl.cutter72.crypto.alert.app.binance.JsonCryptoSymbolWithPrice;
+import pl.cutter72.crypto.alert.app.chart.CandlestickChartData;
+import pl.cutter72.crypto.alert.app.other.DelayedRunner;
+import pl.cutter72.crypto.alert.app.other.TextUtil;
 
 @Accessors(chain = true)
 @Getter
@@ -206,7 +210,7 @@ public class PriceListener {
             @Override
             public void run() {
                 textViewToUpdate.setText(formattedPrice);
-                Colorize.text(activity, textViewToUpdate);
+                Colorizer.text(activity, textViewToUpdate);
             }
         };
         if (!textViewToUpdate.getText().toString().equals(formattedPrice)) {

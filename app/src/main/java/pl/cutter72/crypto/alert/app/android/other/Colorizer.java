@@ -1,4 +1,4 @@
-package pl.cutter72.crypto.alert.app.model;
+package pl.cutter72.crypto.alert.app.android.other;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -7,11 +7,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import pl.cutter72.crypto.alert.app.R;
+import pl.cutter72.crypto.alert.app.other.DelayedRunner;
 
-public final class Colorize {
+public final class Colorizer {
     private static final int COLORIZE_DURATION = 222;
 
-    private Colorize() {
+    private Colorizer() {
         throw new UnsupportedOperationException();
     }
 

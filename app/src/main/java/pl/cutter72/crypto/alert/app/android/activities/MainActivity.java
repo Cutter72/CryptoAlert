@@ -30,11 +30,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.cutter72.crypto.alert.app.R;
-import pl.cutter72.crypto.alert.app.model.CandlestickChartData;
-import pl.cutter72.crypto.alert.app.model.CandlestickData;
-import pl.cutter72.crypto.alert.app.model.JsonCryptoSymbolWithPrice;
-import pl.cutter72.crypto.alert.app.model.NetworkChangeReceiver;
-import pl.cutter72.crypto.alert.app.model.PriceListener;
+import pl.cutter72.crypto.alert.app.android.broadcastreceivers.NetworkChangeReceiver;
+import pl.cutter72.crypto.alert.app.android.other.PriceListener;
+import pl.cutter72.crypto.alert.app.binance.JsonCryptoSymbolWithPrice;
+import pl.cutter72.crypto.alert.app.chart.CandlestickChartData;
+import pl.cutter72.crypto.alert.app.chart.CandlestickData;
 
 @SuppressWarnings("Convert2Lambda")
 public class MainActivity extends AppCompatActivity {
