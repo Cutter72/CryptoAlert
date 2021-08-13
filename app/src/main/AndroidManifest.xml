@@ -15,7 +15,7 @@
         android:theme="@style/Theme.BinanceApi"
         android:fullBackupContent="@xml/backup_descriptor">
         <activity
-            android:name="pl.cutter72.crypto.alert.app.MainActivity"
+            android:name="pl.cutter72.crypto.alert.app.android.activities.MainActivity"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

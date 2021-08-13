@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import pl.cutter72.crypto.alert.app.MainActivity;
+import pl.cutter72.crypto.alert.app.android.activities.MainActivity;
 
 public class NetworkChangeReceiver extends BroadcastReceiver {
     private MainActivity mainActivity;

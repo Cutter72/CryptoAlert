@@ -20,7 +20,7 @@ import java.util.Locale;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import pl.cutter72.crypto.alert.app.MainActivity;
+import pl.cutter72.crypto.alert.app.android.activities.MainActivity;
 
 @Accessors(chain = true)
 @Getter

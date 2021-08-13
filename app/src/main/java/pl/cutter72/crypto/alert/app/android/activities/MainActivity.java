@@ -1,4 +1,4 @@
-package pl.cutter72.crypto.alert.app;
+package pl.cutter72.crypto.alert.app.android.activities;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -6,6 +6,7 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.media.RingtoneManager;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import com.github.mikephil.charting.data.CandleEntry;
 import java.util.ArrayList;
 import java.util.List;
 
+import pl.cutter72.crypto.alert.app.R;
 import pl.cutter72.crypto.alert.app.model.CandlestickChartData;
 import pl.cutter72.crypto.alert.app.model.CandlestickData;
 import pl.cutter72.crypto.alert.app.model.JsonCryptoSymbolWithPrice;
@@ -152,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterNetworkStateCHangeReceiver();
+        unregisterNetworkStateChangeReceiver();
     }
 
     public void onClickRefreshChart(View view) {
@@ -176,8 +178,8 @@ public class MainActivity extends AppCompatActivity {
                 .setSound(uri);
         //Create a channel for notification in Android 8+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = getString(R.string.binance_api_channel);
-            String description = getString(R.string.binance_alarms);
+            CharSequence name = getString(R.string.crypto_alert_channel);
+            String description = getString(R.string.crypto_alarms);
             int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
@@ -203,16 +205,16 @@ public class MainActivity extends AppCompatActivity {
     private void registerNetworkStateChangeReceiver() {
         IntentFilter intentFilter = new IntentFilter();
         // Add network connectivity change action.
-        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         // Set broadcast receiver priority.
-        intentFilter.setPriority(100);
+        intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
         // Create a network change broadcast receiver.
         networkChangeReceiver = new NetworkChangeReceiver(this);
         // Register the broadcast receiver with the intent filter object.
         registerReceiver(networkChangeReceiver, intentFilter);
     }
 
-    private void unregisterNetworkStateCHangeReceiver() {
+    private void unregisterNetworkStateChangeReceiver() {
         // If the broadcast receiver is not null then unregister it.
         // This action is better placed in activity onDestroy() method.
         if (this.networkChangeReceiver != null) {
