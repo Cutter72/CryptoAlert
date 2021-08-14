@@ -20,12 +20,40 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/btnBtcEur"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="1m"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                android:text="BTC/EUR"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp" />
+
+            <Button
+                android:id="@+id/btnEthEur"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ETH/EUR"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp" />
+
+            <Button
+                android:id="@+id/btnXrpEur"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="XRP/EUR"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp" />
+
+            <Button
+                android:id="@+id/btnXrpBtc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="XRP/BTC"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp" />
         </LinearLayout>
     </HorizontalScrollView>
 
@@ -40,13 +68,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView"
         app:layout_constraintVertical_bias="0.0">
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textColor="@color/white" />
     </com.github.mikephil.charting.charts.CandleStickChart>
 
     <TextView
@@ -92,7 +113,6 @@
         android:onClick="onClickRefreshChart"
         android:text="Refresh chart"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -102,7 +122,7 @@
         android:layout_marginEnd="16dp"
         android:text="@string/alarms"
         app:layout_constraintBottom_toBottomOf="@+id/lowerThan"
-        app:layout_constraintEnd_toStartOf="@+id/higherThan"
+        app:layout_constraintEnd_toStartOf="@+id/switchHigherThan"
         app:layout_constraintTop_toTopOf="@+id/higherThan" />
 
     <EditText
@@ -117,8 +137,6 @@
         android:textColor="@color/candlestick_increasing"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/button"
         app:layout_constraintTop_toBottomOf="@+id/xrpEurChart"
         app:layout_constraintWidth_percent="0.25" />
 
@@ -134,9 +152,26 @@
         android:textColor="@color/candlestick_decreasing"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/button"
         app:layout_constraintTop_toBottomOf="@+id/higherThan"
         app:layout_constraintWidth_percent="0.25" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchHigherThan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="@string/higher_than"
+        app:layout_constraintBottom_toBottomOf="@+id/higherThan"
+        app:layout_constraintEnd_toStartOf="@+id/higherThan"
+        app:layout_constraintTop_toTopOf="@+id/higherThan" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchLowerThan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/lower_than"
+        app:layout_constraintBottom_toBottomOf="@+id/lowerThan"
+        app:layout_constraintEnd_toStartOf="@+id/lowerThan"
+        app:layout_constraintTop_toTopOf="@+id/lowerThan" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
