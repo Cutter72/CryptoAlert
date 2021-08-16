@@ -16,7 +16,7 @@
         android:fullBackupContent="@xml/backup_descriptor">
         <activity
             android:name="pl.cutter72.crypto.alert.app.android.activities.MainActivity"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

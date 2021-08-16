@@ -3,6 +3,7 @@ package pl.cutter72.crypto.alert.app.android.other;
 import android.app.Activity;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +22,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import pl.cutter72.crypto.alert.app.android.activities.MainActivity;
-import pl.cutter72.crypto.alert.app.binance.JsonCryptoSymbolWithPrice;
+import pl.cutter72.crypto.alert.app.binance.Market;
 import pl.cutter72.crypto.alert.app.chart.CandlestickChartData;
 import pl.cutter72.crypto.alert.app.other.DelayedRunner;
 import pl.cutter72.crypto.alert.app.other.TextUtil;
@@ -39,9 +40,9 @@ public class PriceListener {
     private final TextView btcEurTextView;
     private final TextView xrpBtcTextView;
     private final TextView xrpBtcEurTextView;
-    private JsonCryptoSymbolWithPrice xrpEurPrice;
-    private JsonCryptoSymbolWithPrice btcEurPrice;
-    private JsonCryptoSymbolWithPrice xrpBtcPrice;
+    private Market xrpEurPrice;
+    private Market btcEurPrice;
+    private Market xrpBtcPrice;
     public static double higherThan = 999999;
     public static double lowerThan = -111111;
 
@@ -51,9 +52,9 @@ public class PriceListener {
         this.btcEurTextView = btcEurTextView;
         this.xrpBtcTextView = xrpBtcTextView;
         this.xrpBtcEurTextView = xrpBtcEurTextView;
-        this.xrpEurPrice = new JsonCryptoSymbolWithPrice();
-        this.btcEurPrice = new JsonCryptoSymbolWithPrice();
-        this.xrpBtcPrice = new JsonCryptoSymbolWithPrice();
+        this.xrpEurPrice = new Market(Market.SYMBOL_XRPEUR);
+        this.btcEurPrice = new Market(Market.SYMBOL_BTCEUR);
+        this.xrpBtcPrice = new Market(Market.SYMBOL_XRPBTC);
         this.isListening = false;
     }
 
@@ -61,9 +62,9 @@ public class PriceListener {
     public void startListening() {
         if (!this.isListening) {
             this.isListening = true;
-            listenFor(JsonCryptoSymbolWithPrice.SYMBOL_XRPEUR);
-            listenFor(JsonCryptoSymbolWithPrice.SYMBOL_BTCEUR);
-            listenFor(JsonCryptoSymbolWithPrice.SYMBOL_XRPBTC);
+            listenFor(Market.SYMBOL_XRPEUR);
+            listenFor(Market.SYMBOL_BTCEUR);
+            listenFor(Market.SYMBOL_XRPBTC);
         }
     }
 
@@ -71,14 +72,14 @@ public class PriceListener {
         this.isListening = false;
     }
 
-    private void listenFor(String cryptoSymbol) {
+    private void listenFor(String marketSymbol) {
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 Runnable request = new Runnable() {
                     @Override
                     public void run() {
-                        updateCryptoData(getJsonCryptoPrice(cryptoSymbol), cryptoSymbol);
+                        updateCryptoData(getMarketPrice(marketSymbol), marketSymbol);
                     }
                 };
                 new Thread(request).start();
@@ -92,14 +93,14 @@ public class PriceListener {
         runnable.run();
     }
 
-    public void getCandlestickChartData(String cryptoSymbol, String interval, int limit) {
+    public void getCandlestickChartData(String marketSymbol, String interval, int limit) {
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 Runnable request = new Runnable() {
                     @Override
                     public void run() {
-                        MainActivity.candlestickChartData = getJsonCandlestickChartData(cryptoSymbol, interval, limit);
+                        MainActivity.candlestickChartData = getJsonCandlestickChartData(marketSymbol, interval, limit);
                         activity.runOnUiThread(((MainActivity) activity)::updatedChartData);
                     }
                 };
@@ -109,17 +110,17 @@ public class PriceListener {
         runnable.run();
     }
 
-    private void updateCryptoData(JsonCryptoSymbolWithPrice cryptoPrice, String cryptoSymbol) {
+    private void updateCryptoData(Market cryptoPrice, String cryptoSymbol) {
         switch (cryptoSymbol) {
-            case JsonCryptoSymbolWithPrice.SYMBOL_XRPEUR:
+            case Market.SYMBOL_XRPEUR:
                 xrpEurPrice = cryptoPrice;
                 updatePriceTextView(xrpEurPrice, xrpEurTextView, 4);
                 break;
-            case JsonCryptoSymbolWithPrice.SYMBOL_BTCEUR:
+            case Market.SYMBOL_BTCEUR:
                 btcEurPrice = cryptoPrice;
                 updatePriceTextView(btcEurPrice, btcEurTextView, 2);
                 break;
-            case JsonCryptoSymbolWithPrice.SYMBOL_XRPBTC:
+            case Market.SYMBOL_XRPBTC:
                 xrpBtcPrice = cryptoPrice;
                 updatePriceTextView(xrpBtcPrice, xrpBtcTextView, 8);
                 break;
@@ -135,10 +136,10 @@ public class PriceListener {
     }
 
     @Nullable
-    private JsonCryptoSymbolWithPrice getJsonCryptoPrice(String cryptoSymbol) {
+    private Market getMarketPrice(@NonNull String cryptoSymbol) {
         System.out.println("getJsonCryptoPrice");
         HttpURLConnection urlConnection = null;
-        JsonCryptoSymbolWithPrice cryptoPrice = new JsonCryptoSymbolWithPrice();
+        Market cryptoPrice = new Market(cryptoSymbol);
         if (cryptoSymbol != null) {
             try {
                 URL url = new URL(PRICE_ENDPOINT + cryptoSymbol);
@@ -149,7 +150,7 @@ public class PriceListener {
                 String jsonResponseString = getJsonString(bufferedReader);
                 System.out.println("jsonResponseString: " + jsonResponseString);
                 ObjectMapper objectMapper = new ObjectMapper();
-                cryptoPrice = objectMapper.readValue(jsonResponseString, JsonCryptoSymbolWithPrice.class);
+                cryptoPrice = objectMapper.readValue(jsonResponseString, Market.class);
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
@@ -204,7 +205,7 @@ public class PriceListener {
         return sb.toString();
     }
 
-    private void updatePriceTextView(JsonCryptoSymbolWithPrice cryptoPrice, TextView textViewToUpdate, int decimalPlaces) {
+    private void updatePriceTextView(Market cryptoPrice, TextView textViewToUpdate, int decimalPlaces) {
         String formattedPrice = getFormattedPriceText(cryptoPrice, decimalPlaces);
         Runnable updateText = new Runnable() {
             @Override
@@ -218,7 +219,7 @@ public class PriceListener {
         }
     }
 
-    private String getFormattedPriceText(JsonCryptoSymbolWithPrice cryptoPrice, int decimalPlaces) {
+    private String getFormattedPriceText(Market cryptoPrice, int decimalPlaces) {
         return String.format(Locale.getDefault(), "%s: %s", cryptoPrice.getSymbol(), TextUtil.getFormattedNumber(cryptoPrice.getPrice(), decimalPlaces));
     }
 }

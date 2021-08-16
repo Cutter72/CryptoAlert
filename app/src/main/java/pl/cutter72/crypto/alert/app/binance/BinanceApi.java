@@ -13,8 +13,8 @@ import java.nio.charset.StandardCharsets;
 
 public class BinanceApi {
 
-    public static void getAllCryptoSymbols() {
-        System.out.println("getAllCryptoSymbols");
+    public static void getAllMarkets() {
+        System.out.println("getAllMarkets");
         HttpURLConnection urlConnection = null;
         try {
             URL url = new URL(Endpoint.ALL_MARKETS_WITH_PRICE);
@@ -25,10 +25,10 @@ public class BinanceApi {
             String jsonResponseString = getJsonString(bufferedReader);
             System.out.println(url.toString() + "\nresponse: " + jsonResponseString);
             ObjectMapper objectMapper = new ObjectMapper();
-            JsonCryptoSymbolWithPrice[] jsonCryptoSymbolWithPrices = objectMapper.readValue(jsonResponseString, JsonCryptoSymbolWithPrice[].class);
-            Markets.allSymbols = new String[jsonCryptoSymbolWithPrices.length];
-            for (int i = 0; i < jsonCryptoSymbolWithPrices.length; i++) {
-                Markets.allSymbols[i] = jsonCryptoSymbolWithPrices[i].getSymbol();
+            Market[] markets = objectMapper.readValue(jsonResponseString, Market[].class);
+            Market.all = new String[markets.length];
+            for (int i = 0; i < markets.length; i++) {
+                Market.all[i] = markets[i].getSymbol();
             }
         } catch (IOException e) {
             e.printStackTrace();

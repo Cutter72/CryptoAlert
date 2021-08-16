@@ -32,7 +32,7 @@ import java.util.List;
 import pl.cutter72.crypto.alert.app.R;
 import pl.cutter72.crypto.alert.app.android.broadcastreceivers.NetworkChangeReceiver;
 import pl.cutter72.crypto.alert.app.android.other.PriceListener;
-import pl.cutter72.crypto.alert.app.binance.JsonCryptoSymbolWithPrice;
+import pl.cutter72.crypto.alert.app.binance.Market;
 import pl.cutter72.crypto.alert.app.chart.CandlestickChartData;
 import pl.cutter72.crypto.alert.app.chart.CandlestickData;
 
@@ -52,12 +52,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        xrpEurChart = findViewById(R.id.xrpEurChart);
-        initializeAlarms();
         initializeChart();
+        initializeAlarms();
         registerNetworkStateChangeReceiver();
         priceListener = new PriceListener(this, findViewById(R.id.xrpEurText), findViewById(R.id.btcEurText), findViewById(R.id.xrpBtcText), findViewById(R.id.xrpBtcEurText));
-        networkChangeReceiver.onReceive(this, getIntent());
     }
 
     private void initializeAlarms() {
@@ -86,11 +84,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeChart() {
+        xrpEurChart = findViewById(R.id.xrpEurChart);
         xrpEurChart.setHighlightPerDragEnabled(true);
         xrpEurChart.setDrawBorders(true);
         xrpEurChart.setBorderColor(getColor(R.color.white));
         Description description = xrpEurChart.getDescription();
-        description.setText(JsonCryptoSymbolWithPrice.SYMBOL_XRPEUR);
+        description.setText(Market.SYMBOL_XRPEUR);
         description.setTextColor(getColor(R.color.white));
 //        xrpEurChart.setMarker(new MarkerView(this, R.layout.support_simple_spinner_dropdown_item));
 //        xrpEurChart.setDrawMarkers(true);
@@ -162,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getCandlestickData() {
-        priceListener.getCandlestickChartData(JsonCryptoSymbolWithPrice.SYMBOL_XRPEUR, "1m", LIMIT);
+        priceListener.getCandlestickChartData(Market.SYMBOL_XRPEUR, "1m", LIMIT);
     }
 
     public void makeAlert(String title, String contentText) {
@@ -212,6 +211,7 @@ public class MainActivity extends AppCompatActivity {
         networkChangeReceiver = new NetworkChangeReceiver(this);
         // Register the broadcast receiver with the intent filter object.
         registerReceiver(networkChangeReceiver, intentFilter);
+        networkChangeReceiver.onReceive(this, getIntent());
     }
 
     private void unregisterNetworkStateChangeReceiver() {
