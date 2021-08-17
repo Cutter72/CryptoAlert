@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -121,13 +122,22 @@ public class MainActivity extends AppCompatActivity {
 
     private void updatePrice(CryptoPrice cryptoPrice) {
         runOnUiThread(() -> {
-                    tvCurrentPrice.setText(String.format(Locale.getDefault(), "1 %S = %.8f %S",
-                            currentMarket.getCryptoSymbol(),
-                            cryptoPrice.getPrice(),
-                            currentMarket.getPriceSymbol()));
-                    Colorizer.text(tvCurrentPrice);
+                    String newPrice = getFormattedPrice(cryptoPrice);
+                    String oldPrice = tvCurrentPrice.getText().toString();
+                    if (!oldPrice.equals(newPrice)) {
+                        tvCurrentPrice.setText(newPrice);
+                        Colorizer.text(tvCurrentPrice);
+                    }
                 }
         );
+    }
+
+    @NonNull
+    private String getFormattedPrice(CryptoPrice cryptoPrice) {
+        return String.format(Locale.getDefault(), "1 %S = %.8f %S",
+                currentMarket.getCryptoSymbol(),
+                cryptoPrice.getPrice(),
+                currentMarket.getPriceSymbol());
     }
 
     private void updateChart(CandleStickChart chartToUpdate, CandlestickChartData candlestickChartData) {
