@@ -1,5 +1,7 @@
 package pl.cutter72.crypto.alert.app.binance;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,18 +18,17 @@ public class Market {
     public static final String SYMBOL_XRPBTC = "XRPBTC";
     public static final String SYMBOL_ETHEUR = "ETHEUR";
 
-    private String symbol;
+    public static String[] all;
+
+    private String marketSymbol;
     private String cryptoSymbol;
     private String priceSymbol;
-    private double price;
 
-    public Market(String symbol) {
-        this.symbol = symbol;
-        this.cryptoSymbol = symbol.substring(0, 3);
-        this.priceSymbol = symbol.substring(3, 6);
+    public Market(@NonNull String marketSymbol) {
+        this.marketSymbol = marketSymbol;
+        this.cryptoSymbol = marketSymbol.substring(0, 3);
+        this.priceSymbol = marketSymbol.substring(3);
     }
-
-    public static String[] all;
 
     public static String[] search(String searchPhrase) {
         List<String> resultList = new ArrayList<>();

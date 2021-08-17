@@ -28,9 +28,9 @@ public final class Colorizer {
     }
 
     @SuppressWarnings("Convert2Lambda")
-    public static void text(Context context, final TextView textView) {
+    public static void text(final TextView textView) {
         final ColorStateList defaultTextColorStateList = textView.getTextColors();
-        textView.setTextColor(context.getColor(R.color.binance_primary));
+        textView.setTextColor(textView.getContext().getColor(R.color.binance_primary));
         DelayedRunner.runDelayed(new Runnable() {
             @Override
             public void run() {

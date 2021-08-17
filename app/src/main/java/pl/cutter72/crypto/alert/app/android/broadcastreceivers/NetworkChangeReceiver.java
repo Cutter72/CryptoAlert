@@ -4,23 +4,26 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import pl.cutter72.crypto.alert.app.android.activities.MainActivity;
 import pl.cutter72.crypto.alert.app.android.other.NetworkUtil;
+import pl.cutter72.crypto.alert.app.other.BackgroundDataListener;
 
 public class NetworkChangeReceiver extends BroadcastReceiver {
-    private MainActivity mainActivity;
+    private final BackgroundDataListener backgroundDataListener;
 
-    public NetworkChangeReceiver(MainActivity mainActivity) {
-        this.mainActivity = mainActivity;
+    public NetworkChangeReceiver(BackgroundDataListener backgroundDataListener) {
+        this.backgroundDataListener = backgroundDataListener;
     }
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
+        System.out.println("NetworkUtil.onReceive");
         NetworkUtil.currentStatus = NetworkUtil.getConnectivityStatusString(context);
         if (NetworkUtil.currentStatus != 0) {
-            mainActivity.startPriceListening();
+            System.out.println("NetworkUtil.currentStatus != 0");
+            backgroundDataListener.startListening();
         } else {
-            mainActivity.stopPriceListening();
+            System.out.println("NetworkUtil.currentStatus == 0");
+            backgroundDataListener.stopListening();
         }
     }
 }

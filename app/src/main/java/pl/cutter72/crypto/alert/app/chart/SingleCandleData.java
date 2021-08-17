@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Getter
 @Setter
-public class CandlestickData {
+public class SingleCandleData {
     private Date openTime;
     private double open;
     private double high;
@@ -25,7 +25,7 @@ public class CandlestickData {
     private double takerBuyQuoteAssetVolume;
     private double ignore;
 
-    public CandlestickData(String[] candleStickData) {
+    public SingleCandleData(String[] candleStickData) {
         if (candleStickData != null && candleStickData.length == 12) {
             openTime = new Date(Long.parseLong(candleStickData[0]));
             open = Double.parseDouble(candleStickData[1]);

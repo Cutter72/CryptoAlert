@@ -7,7 +7,7 @@
     tools:context=".android.activities.MainActivity">
 
     <HorizontalScrollView
-        android:id="@+id/horizontalScrollView"
+        android:id="@+id/favouritesSection"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -25,6 +25,7 @@
                 android:layout_height="wrap_content"
                 android:text="BTC/EUR"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:onClick="onClickFavouriteBtn"
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp" />
 
@@ -34,6 +35,7 @@
                 android:layout_height="wrap_content"
                 android:text="ETH/EUR"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:onClick="onClickFavouriteBtn"
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp" />
 
@@ -43,6 +45,7 @@
                 android:layout_height="wrap_content"
                 android:text="XRP/EUR"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:onClick="onClickFavouriteBtn"
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp" />
 
@@ -52,126 +55,126 @@
                 android:layout_height="wrap_content"
                 android:text="XRP/BTC"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:onClick="onClickFavouriteBtn"
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp" />
         </LinearLayout>
     </HorizontalScrollView>
 
     <com.github.mikephil.charting.charts.CandleStickChart
-        android:id="@+id/xrpEurChart"
+        android:id="@+id/chart"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/chart_background"
-        app:layout_constraintBottom_toTopOf="@+id/xrpEurText"
+        app:layout_constraintBottom_toTopOf="@+id/priceSection"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHeight_percent="0.67"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@+id/favouritesSection">
+
     </com.github.mikephil.charting.charts.CandleStickChart>
 
-    <TextView
-        android:id="@+id/xrpEurText"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/priceSection"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="@string/crypto_price"
-        app:layout_constraintBottom_toTopOf="@+id/btcEurText"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/alarmSection"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chart">
 
-    <TextView
-        android:id="@+id/btcEurText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="@string/crypto_price"
-        app:layout_constraintBottom_toTopOf="@+id/xrpBtcText"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        <TextView
+            android:id="@+id/tvCurrentPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/crypto_price"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
-        android:id="@+id/xrpBtcText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="@string/crypto_price"
-        app:layout_constraintBottom_toTopOf="@+id/xrpBtcEurText"
-        app:layout_constraintLeft_toLeftOf="parent" />
-
-    <TextView
-        android:id="@+id/xrpBtcEurText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="@string/crypto_price"
-        app:layout_constraintBottom_toTopOf="@+id/button"
-        app:layout_constraintLeft_toLeftOf="parent" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onClickRefreshChart"
-        android:text="Refresh chart"
+    <ScrollView
+        android:id="@+id/alarmSection"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/alarm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="@string/alarms"
-        app:layout_constraintBottom_toBottomOf="@+id/lowerThan"
-        app:layout_constraintEnd_toStartOf="@+id/switchHigherThan"
-        app:layout_constraintTop_toTopOf="@+id/higherThan" />
-
-    <EditText
-        android:id="@+id/higherThan"
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:ems="7"
-        android:gravity="center"
-        android:inputType="numberDecimal"
-        android:padding="0dp"
-        android:text="1.50"
-        android:textColor="@color/candlestick_increasing"
-        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/xrpEurChart"
-        app:layout_constraintWidth_percent="0.25" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/priceSection">
 
-    <EditText
-        android:id="@+id/lowerThan"
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:ems="7"
-        android:gravity="center"
-        android:inputType="numberDecimal"
-        android:padding="0dp"
-        android:text="1.00"
-        android:textColor="@color/candlestick_decreasing"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/higherThan"
-        app:layout_constraintWidth_percent="0.25" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/switchHigherThan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:checked="true"
-        android:text="@string/higher_than"
-        app:layout_constraintBottom_toBottomOf="@+id/higherThan"
-        app:layout_constraintEnd_toStartOf="@+id/higherThan"
-        app:layout_constraintTop_toTopOf="@+id/higherThan" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/alarmRow"
+                android:layout_width="match_parent"
+                android:layout_height="144dp">
 
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/switchLowerThan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/lower_than"
-        app:layout_constraintBottom_toBottomOf="@+id/lowerThan"
-        app:layout_constraintEnd_toStartOf="@+id/lowerThan"
-        app:layout_constraintTop_toTopOf="@+id/lowerThan" />
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchAlarm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:checked="true"
+                    android:labelFor="@id/higherThan"
+                    android:text="@string/alarm_on_off"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchHigherThan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:checked="true"
+                    android:labelFor="@id/higherThan"
+                    android:text="@string/higher_than"
+                    app:layout_constraintBottom_toTopOf="@+id/switchLowerThan"
+                    app:layout_constraintEnd_toStartOf="@+id/higherThan"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <EditText
+                    android:id="@+id/higherThan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:ems="7"
+                    android:gravity="center"
+                    android:inputType="numberDecimal"
+                    android:padding="0dp"
+                    android:text="1.50"
+                    android:textColor="@color/candlestick_increasing"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toTopOf="@+id/lowerThan"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchLowerThan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:text="@string/lower_than"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/lowerThan"
+                    app:layout_constraintTop_toBottomOf="@+id/switchHigherThan" />
+
+                <EditText
+                    android:id="@+id/lowerThan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:ems="7"
+                    android:gravity="center"
+                    android:inputType="numberDecimal"
+                    android:padding="0dp"
+                    android:text="1.00"
+                    android:textColor="@color/candlestick_decreasing"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/higherThan" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

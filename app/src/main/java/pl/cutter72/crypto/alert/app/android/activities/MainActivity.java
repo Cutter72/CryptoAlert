@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
@@ -28,86 +29,69 @@ import com.github.mikephil.charting.data.CandleEntry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import pl.cutter72.crypto.alert.app.R;
 import pl.cutter72.crypto.alert.app.android.broadcastreceivers.NetworkChangeReceiver;
-import pl.cutter72.crypto.alert.app.android.other.PriceListener;
+import pl.cutter72.crypto.alert.app.android.other.ChartCallback;
+import pl.cutter72.crypto.alert.app.android.other.Colorizer;
+import pl.cutter72.crypto.alert.app.android.other.PriceCallback;
+import pl.cutter72.crypto.alert.app.binance.BinanceApi;
+import pl.cutter72.crypto.alert.app.binance.CryptoPrice;
 import pl.cutter72.crypto.alert.app.binance.Market;
+import pl.cutter72.crypto.alert.app.binance.RestApi;
 import pl.cutter72.crypto.alert.app.chart.CandlestickChartData;
-import pl.cutter72.crypto.alert.app.chart.CandlestickData;
+import pl.cutter72.crypto.alert.app.chart.SingleCandleData;
+import pl.cutter72.crypto.alert.app.other.BackgroundDataListener;
 
 @SuppressWarnings("Convert2Lambda")
 public class MainActivity extends AppCompatActivity {
 
     private static final String CHANNEL_ID = "channelId";
-    private static final int LIMIT = 60;
-    public static CandlestickChartData candlestickChartData = null;
     private EditText higherThan;
     private EditText lowerThan;
+    private TextView tvCurrentPrice;
+    private Market currentMarket;
     private NetworkChangeReceiver networkChangeReceiver = null;
-    private PriceListener priceListener = null;
-    private CandleStickChart xrpEurChart = null;
+    private BackgroundDataListener backgroundDataListener = null;
+    private CandleStickChart chart = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        currentMarket = new Market(Market.SYMBOL_XRPEUR);
         initializeChart();
-        initializeAlarms();
+//        initializeAlarms();
+        initializePriceListener();
         registerNetworkStateChangeReceiver();
-        priceListener = new PriceListener(this, findViewById(R.id.xrpEurText), findViewById(R.id.btcEurText), findViewById(R.id.xrpBtcText), findViewById(R.id.xrpBtcEurText));
-    }
-
-    private void initializeAlarms() {
-        higherThan = findViewById(R.id.higherThan);
-        lowerThan = findViewById(R.id.lowerThan);
-        higherThan.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                try {
-                    PriceListener.higherThan = Double.parseDouble(((EditText) v).getText().toString());
-                } catch (NumberFormatException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
-        lowerThan.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                try {
-                    PriceListener.lowerThan = Double.parseDouble(((EditText) v).getText().toString());
-                } catch (NumberFormatException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
     }
 
     private void initializeChart() {
-        xrpEurChart = findViewById(R.id.xrpEurChart);
-        xrpEurChart.setHighlightPerDragEnabled(true);
-        xrpEurChart.setDrawBorders(true);
-        xrpEurChart.setBorderColor(getColor(R.color.white));
-        Description description = xrpEurChart.getDescription();
-        description.setText(Market.SYMBOL_XRPEUR);
+        chart = findViewById(R.id.chart);
+        chart.setHighlightPerDragEnabled(true);
+        chart.setDrawBorders(true);
+        chart.setBorderColor(getColor(R.color.white));
+        Description description = chart.getDescription();
+        description.setText(currentMarket.getMarketSymbol());
         description.setTextColor(getColor(R.color.white));
 //        xrpEurChart.setMarker(new MarkerView(this, R.layout.support_simple_spinner_dropdown_item));
 //        xrpEurChart.setDrawMarkers(true);
-        xrpEurChart.setHighlightPerDragEnabled(true);
-        xrpEurChart.setHighlightPerTapEnabled(true);
+        chart.setHighlightPerDragEnabled(true);
+        chart.setHighlightPerTapEnabled(true);
 //        xrpEurChart.setHigh(true);
 
-        YAxis leftAxis = xrpEurChart.getAxisLeft();
+        YAxis leftAxis = chart.getAxisLeft();
         leftAxis.setDrawLabels(false);
         leftAxis.setDrawGridLines(false);
-        YAxis rightAxis = xrpEurChart.getAxisRight();
+        YAxis rightAxis = chart.getAxisRight();
         rightAxis.setDrawGridLines(true);
         rightAxis.setGridColor(getColor(R.color.chart_grid_lines));
         rightAxis.setGridLineWidth(0.8f);
         rightAxis.setTextColor(getColor(R.color.white));
-        xrpEurChart.requestDisallowInterceptTouchEvent(false);
+        chart.requestDisallowInterceptTouchEvent(false);
 
-        XAxis xAxis = xrpEurChart.getXAxis();
+        XAxis xAxis = chart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setTextColor(getColor(R.color.white));
         xAxis.setDrawGridLines(true);// disable x axis grid lines
@@ -117,51 +101,89 @@ public class MainActivity extends AppCompatActivity {
         xAxis.setLabelRotationAngle(-45f);
         xAxis.setAvoidFirstLastClipping(true);
 
-        Legend l = xrpEurChart.getLegend();
+        Legend l = chart.getLegend();
         l.setEnabled(false);
     }
 
-    public void updatedChartData() {
-        if (candlestickChartData != null) {
-            List<CandleEntry> candleEntryList = new ArrayList<>();
-            float i = -LIMIT;
-            for (CandlestickData candlestickData : candlestickChartData.getCandlestickArray()) {
-                candleEntryList.add(new CandleEntry(i++, (float) candlestickData.getHigh(), (float) candlestickData.getLow(), (float) candlestickData.getOpen(), (float) candlestickData.getClose()));
-            }
-            CandleDataSet set1 = new CandleDataSet(candleEntryList, "DataSet 1");
-            set1.setColor(Color.rgb(80, 80, 80));
-            set1.setShadowColorSameAsCandle(true);
-            set1.setShadowWidth(0.8f);
-            set1.setDecreasingColor(getColor(R.color.candlestick_decreasing));
-            set1.setDecreasingPaintStyle(Paint.Style.FILL);
-            set1.setIncreasingColor(getColor(R.color.candlestick_increasing));
-            set1.setIncreasingPaintStyle(Paint.Style.FILL);
-            set1.setNeutralColor(getColor(R.color.candlestick_decreasing));
-            set1.setDrawValues(false);
+    private void initializePriceListener() {
+        tvCurrentPrice = findViewById(R.id.tvCurrentPrice);
+        PriceCallback priceCallback = cryptoPrice -> {
+            System.out.println("priceCallback");
+            updatePrice(cryptoPrice);
+        };
+        ChartCallback chartCallback = candlestickChartData -> {
+            System.out.println("chartCallback");
+            updateChart(chart, candlestickChartData);
+        };
+        backgroundDataListener = new BackgroundDataListener(currentMarket, priceCallback, chartCallback, new BinanceApi(new RestApi()));
+        backgroundDataListener.startListening();
+    }
 
+    private void updatePrice(CryptoPrice cryptoPrice) {
+        runOnUiThread(() -> {
+                    tvCurrentPrice.setText(String.format(Locale.getDefault(), "1 %S = %.4f %S",
+                            currentMarket.getCryptoSymbol(),
+                            cryptoPrice.getPrice(),
+                            currentMarket.getPriceSymbol()));
+                    Colorizer.text(tvCurrentPrice);
+                }
+        );
+    }
 
-            // create a data object with the datasets
-            CandleData data = new CandleData(set1);
-
-
-            // set data
-            xrpEurChart.setData(data);
-            xrpEurChart.invalidate();
+    private void updateChart(CandleStickChart chartToUpdate, CandlestickChartData candlestickChartData) {
+        List<CandleEntry> candleEntryList = new ArrayList<>();
+        float i = -BinanceApi.LIMIT_CHART_DATA;
+        for (SingleCandleData candleData : candlestickChartData.getCandlestickArray()) {
+            candleEntryList.add(new CandleEntry(i++, (float) candleData.getHigh(), (float) candleData.getLow(), (float) candleData.getOpen(), (float) candleData.getClose()));
         }
+        CandleDataSet set1 = new CandleDataSet(candleEntryList, "DataSet 1");
+        set1.setColor(Color.rgb(80, 80, 80));
+        set1.setShadowColorSameAsCandle(true);
+        set1.setShadowWidth(0.8f);
+        set1.setDecreasingColor(chartToUpdate.getContext().getColor(R.color.candlestick_decreasing));
+        set1.setDecreasingPaintStyle(Paint.Style.FILL);
+        set1.setIncreasingColor(chartToUpdate.getContext().getColor(R.color.candlestick_increasing));
+        set1.setIncreasingPaintStyle(Paint.Style.FILL);
+        set1.setNeutralColor(chartToUpdate.getContext().getColor(R.color.candlestick_decreasing));
+        set1.setDrawValues(false);
+        // create a data object with the datasets
+        CandleData data = new CandleData(set1);
+        // set data
+        runOnUiThread(() -> {
+            chartToUpdate.setData(data);
+            chartToUpdate.invalidate();
+        });
+    }
+
+    private void initializeAlarms() {
+        higherThan = findViewById(R.id.higherThan);
+        lowerThan = findViewById(R.id.lowerThan);
+        higherThan.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                try {
+                    BackgroundDataListener.higherThan = Double.parseDouble(((EditText) v).getText().toString());
+                } catch (NumberFormatException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        lowerThan.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                try {
+                    BackgroundDataListener.lowerThan = Double.parseDouble(((EditText) v).getText().toString());
+                } catch (NumberFormatException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unregisterNetworkStateChangeReceiver();
-    }
-
-    public void onClickRefreshChart(View view) {
-        getCandlestickData();
-    }
-
-    private void getCandlestickData() {
-        priceListener.getCandlestickChartData(Market.SYMBOL_XRPEUR, "1m", LIMIT);
     }
 
     public void makeAlert(String title, String contentText) {
@@ -193,14 +215,6 @@ public class MainActivity extends AppCompatActivity {
         notificationManager.notify(369, builder.build());
     }
 
-    public void startPriceListening() {
-        priceListener.startListening();
-    }
-
-    public void stopPriceListening() {
-        priceListener.stopListening();
-    }
-
     private void registerNetworkStateChangeReceiver() {
         IntentFilter intentFilter = new IntentFilter();
         // Add network connectivity change action.
@@ -208,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
         // Set broadcast receiver priority.
         intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
         // Create a network change broadcast receiver.
-        networkChangeReceiver = new NetworkChangeReceiver(this);
+        networkChangeReceiver = new NetworkChangeReceiver(backgroundDataListener);
         // Register the broadcast receiver with the intent filter object.
         registerReceiver(networkChangeReceiver, intentFilter);
         networkChangeReceiver.onReceive(this, getIntent());
@@ -220,5 +234,27 @@ public class MainActivity extends AppCompatActivity {
         if (this.networkChangeReceiver != null) {
             unregisterReceiver(this.networkChangeReceiver);
         }
+    }
+
+    public void onClickFavouriteBtn(View view) {
+        backgroundDataListener.stopListening();
+        int viewId = view.getId();
+        if (viewId == R.id.btnBtcEur) {
+            currentMarket = new Market(Market.SYMBOL_BTCEUR);
+        } else if (viewId == R.id.btnEthEur) {
+            currentMarket = new Market(Market.SYMBOL_ETHEUR);
+        } else if (viewId == R.id.btnXrpEur) {
+            currentMarket = new Market(Market.SYMBOL_XRPEUR);
+        } else if (viewId == R.id.btnXrpBtc) {
+            currentMarket = new Market(Market.SYMBOL_XRPBTC);
+        }
+        backgroundDataListener.setMarket(currentMarket);
+        backgroundDataListener.startListening();
+        updateChartDescription();
+    }
+
+    private void updateChartDescription() {
+        Description description = chart.getDescription();
+        description.setText(currentMarket.getMarketSymbol());
     }
 }

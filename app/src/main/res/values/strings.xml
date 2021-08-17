@@ -6,4 +6,5 @@
     <string name="alarms">Alarms</string>
     <string name="higher_than">Higher than</string>
     <string name="lower_than">Lower than</string>
+    <string name="alarm_on_off">Alarm ON/OFF</string>
 </resources>

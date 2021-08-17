@@ -13,12 +13,12 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 public class CandlestickChartData {
-    private CandlestickData[] candlestickArray;
+    private SingleCandleData[] candlestickArray;
 
     public CandlestickChartData(String[][] candlestickDataArray) {
-        this.candlestickArray = new CandlestickData[candlestickDataArray.length];
+        this.candlestickArray = new SingleCandleData[candlestickDataArray.length];
         for (int i = 0; i < candlestickDataArray.length; i++) {
-            this.candlestickArray[i] = new CandlestickData(candlestickDataArray[i]);
+            this.candlestickArray[i] = new SingleCandleData(candlestickDataArray[i]);
         }
     }
 
