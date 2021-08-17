@@ -37,10 +37,10 @@ import pl.cutter72.crypto.alert.app.android.broadcastreceivers.NetworkChangeRece
 import pl.cutter72.crypto.alert.app.android.other.ChartCallback;
 import pl.cutter72.crypto.alert.app.android.other.Colorizer;
 import pl.cutter72.crypto.alert.app.android.other.PriceCallback;
-import pl.cutter72.crypto.alert.app.binance.BinanceApi;
+import pl.cutter72.crypto.alert.app.binance.BinanceApiImpl;
 import pl.cutter72.crypto.alert.app.binance.CryptoPrice;
 import pl.cutter72.crypto.alert.app.binance.Market;
-import pl.cutter72.crypto.alert.app.binance.RestApi;
+import pl.cutter72.crypto.alert.app.binance.RestApiImpl;
 import pl.cutter72.crypto.alert.app.chart.CandlestickChartData;
 import pl.cutter72.crypto.alert.app.chart.SingleCandleData;
 import pl.cutter72.crypto.alert.app.other.BackgroundDataListener;
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("chartCallback");
             updateChart(chart, candlestickChartData);
         };
-        backgroundDataListener = new BackgroundDataListener(currentMarket, priceCallback, chartCallback, new BinanceApi(new RestApi()));
+        backgroundDataListener = new BackgroundDataListener(currentMarket, priceCallback, chartCallback, new BinanceApiImpl(new RestApiImpl()));
         backgroundDataListener.startListening();
     }
 
@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateChart(CandleStickChart chartToUpdate, CandlestickChartData candlestickChartData) {
         List<CandleEntry> candleEntryList = new ArrayList<>();
-        float i = -BinanceApi.LIMIT_CHART_DATA;
+        float i = -BinanceApiImpl.LIMIT_CHART_DATA;
         for (SingleCandleData candleData : candlestickChartData.getCandlestickArray()) {
             candleEntryList.add(new CandleEntry(i++, (float) candleData.getHigh(), (float) candleData.getLow(), (float) candleData.getOpen(), (float) candleData.getClose()));
         }
