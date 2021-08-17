@@ -14,30 +14,39 @@ import pl.cutter72.crypto.alert.app.binance.Market;
 @Setter
 @SuppressWarnings("Convert2Lambda")
 public class BackgroundDataListener {
+    public static final long DEFAULT_INTERVAL_PRICE_MILLIS = 500;
+    public static final long DEFAULT_INTERVAL_CHART_MILLIS = 1000 * 2;
     private static final String PRICE_ENDPOINT = "https://api.binance.com/api/v3/ticker/price?symbol=";
     private static final String CANDLESTICK_ENDPOINT_FORMAT = "https://api.binance.com/api/v3/klines?symbol=%s&interval=%s&limit=%s";
-    public static final long DEFAULT_INTERVAL_PRICE = 500;
-    public static final long DEFAULT_INTERVAL_CHART = 1000 * 10;
-    private boolean isListening;
     public static double higherThan = 999999;
     public static double lowerThan = -111111;
+    private boolean isListening;
     private Market market;
     private PriceCallback priceCallback;
     private ChartCallback chartCallback;
     private BinanceApi binanceApi;
     private long priceListenInterval;
     private long chartListenInterval;
+    private boolean hasMarketChangedPrice;
+    private boolean hasMarketChangedChart;
 
     public BackgroundDataListener(Market market, PriceCallback priceCallback, ChartCallback chartCallback, BinanceApi binanceApi) {
         this.market = market;
         this.priceCallback = priceCallback;
         this.chartCallback = chartCallback;
         this.binanceApi = binanceApi;
-        this.priceListenInterval = DEFAULT_INTERVAL_PRICE;
-        this.chartListenInterval = DEFAULT_INTERVAL_CHART;
+        this.priceListenInterval = DEFAULT_INTERVAL_PRICE_MILLIS;
+        this.chartListenInterval = DEFAULT_INTERVAL_CHART_MILLIS;
         this.isListening = false;
+        this.hasMarketChangedPrice = false;
+        this.hasMarketChangedChart = false;
     }
 
+    public void setMarket(Market market) {
+        this.market = market;
+        this.hasMarketChangedPrice = true;
+        this.hasMarketChangedChart = true;
+    }
 
     public void startListening() {
         System.out.println("startListening");
@@ -62,12 +71,17 @@ public class BackgroundDataListener {
                 System.out.println("listenForPrice.run");
                 while (isListening) {
                     System.out.println("listenForPrice.while");
-                    waitInterval(priceListenInterval);
-                    if (isConnectedToInternet()) {
-                        priceCallback.onPriceUpdate(binanceApi.getCryptoPrice(market.getMarketSymbol()));
+                    if (hasMarketChangedPrice) {
+                        hasMarketChangedPrice = false;
+                        return;
                     } else {
-                        stopListening();
+                        if (isConnectedToInternet()) {
+                            priceCallback.onPriceUpdate(binanceApi.getCryptoPrice(market.getMarketSymbol()));
+                        } else {
+                            stopListening();
+                        }
                     }
+                    waitInterval(priceListenInterval);
                 }
             }
         };
@@ -82,12 +96,17 @@ public class BackgroundDataListener {
                 System.out.println("listenForChart.run");
                 while (isListening) {
                     System.out.println("listenForChart.while");
-                    waitInterval(chartListenInterval);
-                    if (isConnectedToInternet()) {
-                        chartCallback.onChartDataReceive(binanceApi.getCandlestickChartData(market.getMarketSymbol(), BinanceApi.INTERVAL_MINUTE, BinanceApi.LIMIT_CHART_DATA));
+                    if (hasMarketChangedChart) {
+                        hasMarketChangedChart = false;
+                        return;
                     } else {
-                        stopListening();
+                        if (isConnectedToInternet()) {
+                            chartCallback.onChartDataReceive(binanceApi.getCandlestickChartData(market.getMarketSymbol(), BinanceApi.INTERVAL_MINUTE, BinanceApi.LIMIT_CHART_DATA));
+                        } else {
+                            stopListening();
+                        }
                     }
+                    waitInterval(chartListenInterval);
                 }
             }
         };

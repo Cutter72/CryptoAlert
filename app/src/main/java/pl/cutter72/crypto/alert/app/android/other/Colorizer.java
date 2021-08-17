@@ -10,7 +10,7 @@ import pl.cutter72.crypto.alert.app.R;
 import pl.cutter72.crypto.alert.app.other.DelayedRunner;
 
 public final class Colorizer {
-    private static final int COLORIZE_DURATION = 222;
+    private static final int COLORIZE_DURATION = 210;
 
     private Colorizer() {
         throw new UnsupportedOperationException();

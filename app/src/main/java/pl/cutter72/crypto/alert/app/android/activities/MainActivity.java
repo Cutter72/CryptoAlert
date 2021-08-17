@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updatePrice(CryptoPrice cryptoPrice) {
         runOnUiThread(() -> {
-                    tvCurrentPrice.setText(String.format(Locale.getDefault(), "1 %S = %.4f %S",
+                    tvCurrentPrice.setText(String.format(Locale.getDefault(), "1 %S = %.8f %S",
                             currentMarket.getCryptoSymbol(),
                             cryptoPrice.getPrice(),
                             currentMarket.getPriceSymbol()));
