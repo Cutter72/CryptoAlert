@@ -1,4 +1,4 @@
-package pl.cutter72.crypto.alert.app.android.other;
+package pl.cutter72.crypto.alert.app.binance;
 
 import pl.cutter72.crypto.alert.app.chart.CandlestickChartData;
 

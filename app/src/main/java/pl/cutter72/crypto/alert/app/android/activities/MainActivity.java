@@ -34,16 +34,16 @@ import java.util.Locale;
 
 import pl.cutter72.crypto.alert.app.R;
 import pl.cutter72.crypto.alert.app.android.broadcastreceivers.NetworkChangeReceiver;
-import pl.cutter72.crypto.alert.app.android.other.ChartCallback;
 import pl.cutter72.crypto.alert.app.android.other.Colorizer;
-import pl.cutter72.crypto.alert.app.android.other.PriceCallback;
+import pl.cutter72.crypto.alert.app.binance.BackgroundDataListener;
 import pl.cutter72.crypto.alert.app.binance.BinanceApiImpl;
+import pl.cutter72.crypto.alert.app.binance.ChartCallback;
 import pl.cutter72.crypto.alert.app.binance.CryptoPrice;
 import pl.cutter72.crypto.alert.app.binance.Market;
+import pl.cutter72.crypto.alert.app.binance.PriceCallback;
 import pl.cutter72.crypto.alert.app.binance.RestApiImpl;
 import pl.cutter72.crypto.alert.app.chart.CandlestickChartData;
 import pl.cutter72.crypto.alert.app.chart.SingleCandleData;
-import pl.cutter72.crypto.alert.app.other.BackgroundDataListener;
 
 @SuppressWarnings("Convert2Lambda")
 public class MainActivity extends AppCompatActivity {

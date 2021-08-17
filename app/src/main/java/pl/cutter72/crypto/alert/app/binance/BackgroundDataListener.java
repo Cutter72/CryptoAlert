@@ -1,13 +1,9 @@
-package pl.cutter72.crypto.alert.app.other;
+package pl.cutter72.crypto.alert.app.binance;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import pl.cutter72.crypto.alert.app.android.other.ChartCallback;
 import pl.cutter72.crypto.alert.app.android.other.NetworkUtil;
-import pl.cutter72.crypto.alert.app.android.other.PriceCallback;
-import pl.cutter72.crypto.alert.app.binance.BinanceApi;
-import pl.cutter72.crypto.alert.app.binance.Market;
 
 @Accessors(chain = true)
 @Getter
@@ -16,8 +12,6 @@ import pl.cutter72.crypto.alert.app.binance.Market;
 public class BackgroundDataListener {
     public static final long DEFAULT_INTERVAL_PRICE_MILLIS = 500;
     public static final long DEFAULT_INTERVAL_CHART_MILLIS = 1000 * 5;
-    private static final String PRICE_ENDPOINT = "https://api.binance.com/api/v3/ticker/price?symbol=";
-    private static final String CANDLESTICK_ENDPOINT_FORMAT = "https://api.binance.com/api/v3/klines?symbol=%s&interval=%s&limit=%s";
     public static double higherThan = 999999;
     public static double lowerThan = -111111;
     private boolean isListening;

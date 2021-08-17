@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import pl.cutter72.crypto.alert.app.android.other.NetworkUtil;
-import pl.cutter72.crypto.alert.app.other.BackgroundDataListener;
+import pl.cutter72.crypto.alert.app.binance.BackgroundDataListener;
 
 public class NetworkChangeReceiver extends BroadcastReceiver {
     private final BackgroundDataListener backgroundDataListener;
